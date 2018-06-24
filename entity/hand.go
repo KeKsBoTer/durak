@@ -1,27 +1,12 @@
-package durak
+package entity
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 )
 
 // Hand is the cards a player holds
 type Hand []*Card
-
-// SortBySuit sorts the cards by card Suit
-func (h *Hand) SortBySuit() {
-	sort.SliceStable(h, func(i, j int) bool {
-		return (*h)[i].suit < (*h)[j].suit
-	})
-}
-
-// SortByNumber sorts the cards by card number
-func (h *Hand) SortByNumber() {
-	sort.SliceStable(h, func(i, j int) bool {
-		return (*h)[i].number < (*h)[j].number
-	})
-}
 
 // Empty returns no cards are left in hand
 func (h Hand) Empty() bool {
@@ -33,13 +18,24 @@ func (h Hand) Size() int {
 	return len(h)
 }
 
-// AddCards add cards to the hand
-func (h *Hand) AddCards(cards []*Card) {
+// addCards add cards to the hand
+func (h *Hand) addCards(cards []*Card) {
 	*h = append(*h, cards...)
 }
 
+// dropCard finds card in hand and removes it from it
+func (h *Hand) dropCard(card Card) *Card {
+	for _, c := range *h {
+		if *c == card {
+			h.removeCard(c)
+			return c
+		}
+	}
+	return nil
+}
+
 // RemoveCard removes cards to the hand
-func (h *Hand) RemoveCard(card *Card) {
+func (h *Hand) removeCard(card *Card) {
 	for i, c := range *h {
 		if c == card {
 			*h = append((*h)[:i], (*h)[i+1:]...)

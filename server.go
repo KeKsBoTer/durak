@@ -8,13 +8,14 @@ import (
 )
 
 func makeRouter() *mux.Router {
-	router := mux.NewRouter()	
+	router := mux.NewRouter()
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "It works")
 	})
 	return router
 }
 
+// Start starts web server
 func Start() {
 	router := makeRouter()
 	http.ListenAndServe(":8080", router)

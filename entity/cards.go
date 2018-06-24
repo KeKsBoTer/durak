@@ -1,4 +1,4 @@
-package durak
+package entity
 
 import (
 	"fmt"
@@ -67,11 +67,11 @@ type Card struct {
 }
 
 // Trumps returns if the card trumps another given card
-func (c Card) Trumps(c2 Card, trump CardSuit) bool {
+func (c Card) Trumps(c2 Card, trump Card) bool {
 	if c.suit == c2.suit {
 		return c.number-c2.number > 0
 	}
-	return c.suit == trump && c2.suit != trump
+	return c.suit == trump.suit && c2.suit != trump.suit
 }
 
 func (c Card) String() string {

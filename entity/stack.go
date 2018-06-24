@@ -1,4 +1,4 @@
-package durak
+package entity
 
 import (
 	"math/rand"
@@ -78,9 +78,7 @@ type stackNode struct {
 }
 
 // RandomStack generates a random card stack
-func RandomStack() *CardStack {
-	cards := make([]Card, len(AllCards))
-	copy(cards, AllCards)
+func RandomStack(cards []Card) *CardStack {
 	// shuffling cards
 	for i := len(cards) - 1; i > 0; i-- {
 		j := rand.Intn(i + 1)
