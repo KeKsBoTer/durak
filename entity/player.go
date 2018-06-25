@@ -1,16 +1,11 @@
 package entity
 
-import "fmt"
-
 // Action can be performed by a user
 type Action int
 
 const (
 	// Attack defener with card
 	Attack Action = iota
-
-	// FirstAttack starting a attack
-	FirstAttack
 
 	// TakeCards from the middle
 	TakeCards
@@ -41,7 +36,7 @@ type User string
 // Player is a user with cards
 type Player struct {
 	user     User
-	hand     Hand
+	Hand     Hand
 	finished bool
 
 	// Actions are the fings the user can do
@@ -58,22 +53,28 @@ func (p Player) CanDo(a Action) bool {
 	return p.actions.Contains(a)
 }
 
-// AddAction adds action to possible actions
-func (p *Player) AddAction(a Action) {
-	if p.CanDo(a) {
-		panic("user allready can do this action")
+// AddActions adds action to possible actions
+func (p *Player) AddActions(actions ...Action) {
+	for _, a := range actions {
+		if !p.CanDo(a) {
+			p.actions = append(p.actions, a)
+		}
 	}
-	p.actions = append(p.actions, a)
 }
 
-// RemoveAction removes action from possible actions
-func (p *Player) RemoveAction(action Action) {
-	for i, a := range p.actions {
-		if a == action {
+// RemoveActions removes action from possible actions
+func (p *Player) RemoveActions(actions ...Action) {
+	for i := 0; i < len(p.actions); i++ {
+		if Actions(actions).Contains(p.actions[i]) {
 			p.actions = append(p.actions[:i], p.actions[i+1:]...)
-			return
+			i--
 		}
 	}
 	// Card not found something must be wrong
-	panic(fmt.Errorf("Action %v is not possible %v", action, p.actions))
+	// panic(fmt.Errorf("Action %v is not possible %v", action, p.actions))
+}
+
+// Finished marks player as finished
+func (p *Player) Finished() {
+	p.finished = true
 }

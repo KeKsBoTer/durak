@@ -8,10 +8,10 @@ import (
 
 // Game is the state of a running game
 type Game struct {
-	players    []Player
-	stack      CardStack
-	middlePool AttackPool
-	trump      *Card
+	players []Player
+	Pile    CardPile
+	Middle  AttackPool
+	trump   *Card
 	// the player who is attacing
 	activePlayer int // index of the active player
 }
@@ -19,8 +19,8 @@ type Game struct {
 // NewGame generates a new game with a random stack and gives 6 cards to every user
 func NewGame(users []User, cards []Card) (*Game, error) {
 	game := new(Game)
-	game.stack = *RandomStack(cards)
-	game.trump = game.stack.Pop()
+	game.Pile = *RandomStack(cards)
+	game.trump = game.Pile.Pop()
 	lenUsers := len(users)
 
 	// check if player count is ok
@@ -35,7 +35,7 @@ func NewGame(users []User, cards []Card) (*Game, error) {
 		game.players[i] = Player{
 			user:     u,
 			finished: false,
-			hand:     game.stack.PopN(6),
+			Hand:     game.Pile.PopN(6),
 		}
 	}
 
@@ -55,13 +55,15 @@ func (g Game) ActivePlayer() *Player {
 }
 
 // ActivePlayers returns the count of active playerds
-func (g Game) ActivePlayers() (active int) {
+func (g Game) ActivePlayers() []*Player {
+
+	players := []*Player{}
 	for _, p := range g.players {
 		if p.IsPlaying() {
-			active++
+			players = append(players, &p)
 		}
 	}
-	return
+	return players
 }
 
 // NextPlayer sets next player as active player
@@ -144,11 +146,6 @@ func (g Game) Defender() *Player {
 	return &g.players[g.defender()]
 }
 
-// IsNumberPresentInMiddle checks if the cards number is present in the middle
-func (g *Game) IsNumberPresentInMiddle(card Card) bool {
-	return g.middlePool.ContainsNumber(card.number)
-}
-
 // Attack adds card to middle
 // checks if attacker holds card and removes it from his hand
 func (g *Game) Attack(user User, c Card) error {
@@ -156,13 +153,13 @@ func (g *Game) Attack(user User, c Card) error {
 	if err != nil {
 		return err
 	}
-	g.middlePool.attack(card)
+	g.Middle.attack(card)
 	return nil
 }
 
 func (g *Game) dropCard(user User, card Card) (*Card, error) {
 	player := g.Player(user)
-	c := player.hand.dropCard(card)
+	c := player.Hand.dropCard(card)
 	if c == nil {
 		return nil, errors.New("you do not have this card")
 	}
@@ -177,34 +174,12 @@ func (g *Game) Defend(user User, att, def Card) error {
 	if err != nil {
 		return err
 	}
-	return g.middlePool.defend(card, att)
+	return g.Middle.defend(card, att)
 }
 
-// IsEverythingDefended checks if every cards in the middle is defended
-func (g Game) IsEverythingDefended() bool {
-	return g.middlePool.IsEverythingDefended()
-}
-
-// GiveCards adds the given cards to the players hand
-func (g *Game) GiveCards(u User, cards []*Card) {
-	g.Player(u).hand.addCards(cards)
-}
-
-// AttackPool returns all cards in the middle
-func (g Game) AttackPool() []Card {
-	cards := []Card{}
-	for _, a := range g.middlePool {
-		cards = append(cards, *a.attacker, *a.defender)
+// ResetActions removes all possible actions from player
+func (g *Game) ResetActions() {
+	for _, p := range g.players {
+		p.actions = []Action{}
 	}
-	return cards
-}
-
-// ClearMiddle removes card form middle and returns them
-func (g *Game) ClearMiddle() []*Card {
-	return g.middlePool.clear()
-}
-
-// CanDefend checks if card is present in middle and not defended yet
-func (g Game) CanDefend(att Card) bool {
-	return g.middlePool.ContainsAttackCard(att) && g.middlePool.IsUndefended(att)
 }

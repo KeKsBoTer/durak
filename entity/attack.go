@@ -14,10 +14,10 @@ func (a AttackStack) String() string {
 // AttackPool pool represents the cards in the middle
 type AttackPool []AttackStack
 
-// ContainsNumber checks if any card in the pool has the given number
-func (p AttackPool) ContainsNumber(n CardNumber) bool {
+// ContainsCardNumber checks if any card in the pool has the given number
+func (p AttackPool) ContainsCardNumber(c Card) bool {
 	for _, a := range p {
-		if a.attacker.number == n || (a.defender != nil && a.defender.number == n) {
+		if a.attacker.number == c.number || (a.defender != nil && a.defender.number == c.number) {
 			return true
 		}
 	}
@@ -67,7 +67,7 @@ func (p *AttackPool) defend(def *Card, att Card) error {
 }
 
 // Clear removes all cards from pool and returns them as list
-func (p *AttackPool) clear() []*Card {
+func (p *AttackPool) Clear() []*Card {
 	cards := []*Card{}
 	for _, a := range *p {
 		cards = append(cards, a.attacker, a.defender)
@@ -84,4 +84,28 @@ func (p AttackPool) IsEverythingDefended() bool {
 		}
 	}
 	return true
+}
+
+// Cards returns all cards in the middle
+func (p AttackPool) Cards() []Card {
+	cards := []Card{}
+	for _, a := range p {
+		cards = append(cards, *a.attacker, *a.defender)
+	}
+	return cards
+}
+
+// IsEmpty checks if there are no cards in the middle
+func (p AttackPool) IsEmpty() bool {
+	for _, a := range p {
+		if a.defender == nil && a.attacker != nil {
+			return false
+		}
+	}
+	return true
+}
+
+// CanDefend checks if card is present in middle and not defended yet
+func (p AttackPool) CanDefend(att Card) bool {
+	return p.ContainsAttackCard(att) && p.IsUndefended(att)
 }

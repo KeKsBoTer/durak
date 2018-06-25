@@ -1,7 +1,7 @@
 package main
 
-import "github.com/KeKsBoTer/durak"
+import "github.com/KeKsBoTer/durak/server"
 
 func main() {
-	durak.Start()
+	server.Start()
 }

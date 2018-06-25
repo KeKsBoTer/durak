@@ -18,8 +18,8 @@ func (h Hand) Size() int {
 	return len(h)
 }
 
-// addCards add cards to the hand
-func (h *Hand) addCards(cards []*Card) {
+// AddCards add cards to the hand
+func (h *Hand) AddCards(cards []*Card) {
 	*h = append(*h, cards...)
 }
 

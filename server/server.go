@@ -1,4 +1,4 @@
-package durak
+package server
 
 import (
 	"fmt"
@@ -7,11 +7,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "It works")
+}
+
 func makeRouter() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "It works")
-	})
+	router.HandleFunc("/", indexHandler)
+	router.HandleFunc("/ws", websocket)
 	return router
 }
 
