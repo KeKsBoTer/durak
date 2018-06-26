@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./webapp",
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es5",
