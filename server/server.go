@@ -3,6 +3,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/KeKsBoTer/durak/entity"
+
 	"github.com/gorilla/mux"
 )
 
@@ -15,11 +17,16 @@ func cors(next http.Handler) http.Handler {
 }
 
 func makeRouter() *mux.Router {
+	hub := newHub()
+	go hub.run()
 	router := mux.NewRouter()
 	router.Use(cors)
 	router.HandleFunc("/login", login)
 	router.HandleFunc("/username", username)
-	router.HandleFunc("/ws", websocket)
+	router.HandleFunc("/ws", ws)
+	router.HandleFunc("/queue", func(w http.ResponseWriter, r *http.Request) {
+		queue(hub, w, r)
+	})
 	router.StrictSlash(true)
 	return router
 }
@@ -28,4 +35,8 @@ func makeRouter() *mux.Router {
 func Start() {
 	router := makeRouter()
 	http.ListenAndServe(":8080", router)
+}
+
+func startGame(users []entity.User) {
+
 }
