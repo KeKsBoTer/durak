@@ -2,7 +2,7 @@
 
 The goal of this project is to create the card playing game [durak](https://de.wikipedia.org/wiki/Durak_(Kartenspiel)) as a web app.
 
-This project is very new and currently under heavy development so do not expect runing builds.
+This project is very new and currently under heavy development so do not expect working builds.
 
 The web part is located in a own repository under [KeKsBoTer/durak-webapp](https://github.com/KeKsBoTer/durak-webapp).
 
